@@ -180,11 +180,8 @@ class Request {
 		//Log exception
 		\com\microdle\library\core\LogManager::log('Error code ' . $code . ': ' . $description . ' - File: ' . $file . ' - Line: ' . $line);
 		
-		//This part allows to use try catch
-		//Case gzinflate error
-		if('gzinflate(): data error' == $description) {
-			throw new \Exception($description);
-		}
+		//This part allows to use try catch on undefined variable, division by zero, etc.
+		//throw new \ErrorException($description, $code);
 	}
 	
 	/**
@@ -479,7 +476,7 @@ class Request {
 					$existsDataSource = true;
 				}
 			}
-
+			
 			//Case technical error
 			catch(\Throwable $e) {
 				//Case exists data source
@@ -488,9 +485,9 @@ class Request {
 					$existsDataSource = true;
 				}
 				
-				//Case business error
+				//Case business error: $errorCode = 0 comes from set_error_handler
 				$errorCode = $e->getCode();
-				if($errorCode < 500) {
+				if($errorCode > 0 && $errorCode < 500) {
 					$this->httpCode = &$errorCode;
 					$bo->response = $e->getMessage();
 				}
@@ -499,7 +496,7 @@ class Request {
 				else {
 					//Log error
 					\com\microdle\library\core\LogManager::log($e->getMessage(), $e->getTrace());
-
+					
 					//Case default error
 					$this->httpCode = $bo->httpCode != 200 ? $bo->httpCode : 500;
 				}
@@ -545,7 +542,7 @@ class Request {
 		}
 		
 		//Set HTTP status code
-		\header($_SERVER['SERVER_PROTOCOL'] . ' ' . $this->httpCode . self::$httpCodes[$this->httpCode]);
+		\header($_SERVER['SERVER_PROTOCOL'] . ' ' . $this->httpCode . (isset(self::$httpCodes[$this->httpCode]) ? self::$httpCodes[$this->httpCode] : $this->httpMessage));
 		
 		//Set content type
 		\header('Content-Type: ' . (isset(self::$contentTypes[$this->_format]) ? self::$contentTypes[$this->_format] : self::$contentTypes['text']));

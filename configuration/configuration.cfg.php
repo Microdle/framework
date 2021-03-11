@@ -131,8 +131,9 @@ spl_autoload_register(function($className) {
 });
 
 //Define error/exception not catched
-set_error_handler(function(string $code, string $message, string $file, int $line, array $context = null) {
-	\com\microdle\request\Request::errorHandler($code, $message, $file, $line);
+set_error_handler(function(string $code, string $message, string $file, int $line) {
+	//\com\microdle\request\Request::errorHandler($code, $message, $file, $line);
+	throw new \ErrorException($message, 0, E_ERROR, $file, $line);
 });
 
 //Callback on end process

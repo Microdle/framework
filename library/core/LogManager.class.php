@@ -113,17 +113,19 @@ class LogManager {
 		
 		//Case customized log exists
 		$traceData = $traces[0];
-		$class = $traceData['class'];
-		$method = $traceData['function'];
-		if(isset($_logData[$class][$method])) {
-			//Loop on error files
-			foreach($_logData[$class][$method] as &$errorFile) {
-				//Append error in error file
-				error_log($errorMessage, 3, $errorFile . $_ENV['FILE_EXTENSIONS']['log']);
+		if(isset($traceData['class'])) {
+			$class = $traceData['class'];
+			$method = $traceData['function'];
+			if(isset($_logData[$class][$method])) {
+				//Loop on error files
+				foreach($_logData[$class][$method] as &$errorFile) {
+					//Append error in error file
+					error_log($errorMessage, 3, $errorFile . $_ENV['FILE_EXTENSIONS']['log']);
+				}
+
+				//End log
+				return;
 			}
-			
-			//End log
-			return;
 		}
 		
 		//Case application log by default
