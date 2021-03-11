@@ -585,7 +585,7 @@ class Request {
 			CURLOPT_FRESH_CONNECT => true,
 
 			CURLOPT_HEADER => false,
-			CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17',
+			//CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17',
 
 			//Fix Error 51: SSL: certificate subject name xxx does not match target host name
 			CURLOPT_SSL_VERIFYPEER => false,

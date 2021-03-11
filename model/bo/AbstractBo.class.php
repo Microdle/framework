@@ -507,7 +507,7 @@ abstract class AbstractBo {
 	}
 	
 	/**
-	 * Open data source, and store the conection in $this->_dataSources.
+	 * Open data source, and store the connection in $this->_dataSources.
 	 * @param string $dataSourceName (optional) Data source name. if not set, then open all data sources declared in *.datasource.cfg.php.
 	 * @param boolean $beginTransaction (optional) Transaction status. true by default to begin transaction. 
 	 * @return void
