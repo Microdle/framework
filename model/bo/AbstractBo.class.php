@@ -13,7 +13,7 @@ abstract class AbstractBo {
 	 * Request instance.
 	 * @var \com\microdle\request\Request|null
 	 */
-	protected \com\microdle\request\Request $_request;
+	protected ?\com\microdle\request\Request $_request = null;
 	
 	/**
 	 * Response HTTP status code. 200 by default for successful response.
