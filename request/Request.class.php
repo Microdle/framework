@@ -905,8 +905,18 @@ class Request {
 		//Create file pointer
 		$f = fopen('php://memory', 'r+');
 		
+		//Retrieve row title
+		$rowData = $rows[array_key_first($rows)];
+		
+		//Case no collection, but fields
+		if(!is_array($rowData)) {
+			//Build collection with unique row
+			$rowData = $rows;
+			$rows = [$rows];
+		}
+		
 		//Add column title
-		$rowData = array_keys($rows[array_key_first($rows)]);
+		$rowData = array_keys($rowData);
 		fputcsv($f, $rowData, $delimiter, $enclosure, $escapeChar);
 		
 		//Add rows

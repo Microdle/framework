@@ -13,7 +13,7 @@ abstract class AbstractBo {
 	 * Request instance.
 	 * @var \com\microdle\request\Request|null
 	 */
-	protected ?\com\microdle\request\Request $_request = null;
+	protected \com\microdle\request\Request $_request;
 	
 	/**
 	 * Response HTTP status code. 200 by default for successful response.
@@ -90,10 +90,17 @@ abstract class AbstractBo {
 	 * @return com\microdle\model\ds\AbstractDs
 	 */
 	public function __get(string $className): ?object {
-		//Case data source is already instanciated
-		if(isset($this->_dataSources[$className])) {
-			return $this->_dataSources[$className];
+		//Case Redis
+		if($className == 'redis') {
+			//Connect to Redis manager
+			return $this->redis = new \com\microdle\library\core\RedisManager($this);
 		}
+		
+		//Case traditional database
+		//Case data source is already instanciated
+		//if(isset($this->_dataSources[$className])) {
+		//	return $this->_dataSources[$className];
+		//}
 		
 		//Case data source is not instanciated yet
 		//Build the data source path
@@ -177,6 +184,14 @@ abstract class AbstractBo {
 		
 		//Throw exception
 		throw $exception;
+	}
+	
+	/**
+	 * Return request instance.
+	 * @return \org\adventy\request\AbstractRequest
+	 */
+	public function getRequest(): \org\adventy\request\AbstractRequest {
+		return $this->_request;
 	}
 	
 	/**
