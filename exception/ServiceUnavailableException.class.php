@@ -13,12 +13,12 @@ class ServiceUnavailableException extends \Exception {
 	 * The exception code.
 	 * @var int
 	 */
-	protected $code = 501;
+	protected $code = 503;
 
     /**
 	 * The exception message.
 	 * @var string
 	 */
-    protected $message = 'Not Implemented';
+    protected $message = 'Service Unavailable';
 }
 ?>
