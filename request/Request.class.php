@@ -409,7 +409,7 @@ class Request {
 		$existsDataSource = false;
 		$existsAspect = false;
 		
-		//Case BO exists in application
+		//Case BO exists
 		if(is_file($fileName)) {
 			//Load BO class
 			require $_ENV['FRAMEWORK_ROOT'] . '/model/bo/AbstractBo.class.php';
@@ -513,6 +513,11 @@ class Request {
 				$this->httpCode = &$bo->httpCode;
 			}
 			$this->response = &$bo->response;
+		}
+		
+		//Case BO not found
+		else {
+			$this->httpCode = 404;
 		}
 		
 		return $existsAspect ;
