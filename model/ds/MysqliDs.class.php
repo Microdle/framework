@@ -15,7 +15,7 @@ class MysqliDs extends \com\microdle\model\ds\AbstractDs {
 	 * Data source name (database name).
 	 * @var string
 	 */
-	protected ?string $_dataSourceName = null;
+	//protected ?string $_dataSourceName = null;
 	
 	/**
 	 * (non-PHPdoc)
@@ -119,7 +119,7 @@ class MysqliDs extends \com\microdle\model\ds\AbstractDs {
 	 * (non-PHPdoc)
 	 * @see AbstractDs::prepare()
 	 */
-	public function prepare(string $sql, array &$parameters): ?array {
+	public function prepare(string $sql, array &$parameters, string $sqlName = 'mySql'): ?array {
 		//@todo
 		throw new \Exception('Method not available: ' . __METHOD__);
 	}

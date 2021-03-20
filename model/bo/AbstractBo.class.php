@@ -92,15 +92,12 @@ abstract class AbstractBo {
 	public function __get(string $className): ?object {
 		//Case Redis
 		if($className == 'redis') {
+			//Load data sources configuration: $_dataSources
+			require $dataSourceFile = $_ENV['ROOTS']['configuration'] . '/' . $_SERVER['HTTP_HOST'] . $_ENV['FILE_EXTENSIONS']['dataSource'];
+			
 			//Connect to Redis manager
-			return $this->redis = new \com\microdle\library\core\RedisManager($this);
+			return new \org\adventy\library\core\RedisManager($this, $this->$_defaultDataSourceKey);
 		}
-		
-		//Case traditional database
-		//Case data source is already instanciated
-		//if(isset($this->_dataSources[$className])) {
-		//	return $this->_dataSources[$className];
-		//}
 		
 		//Case data source is not instanciated yet
 		//Build the data source path
@@ -188,9 +185,9 @@ abstract class AbstractBo {
 	
 	/**
 	 * Return request instance.
-	 * @return \org\adventy\request\AbstractRequest
+	 * @return \com\microdle\request\AbstractRequest
 	 */
-	public function getRequest(): \org\adventy\request\AbstractRequest {
+	public function getRequest(): \com\microdle\request\AbstractRequest {
 		return $this->_request;
 	}
 	

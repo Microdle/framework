@@ -477,7 +477,7 @@ class Request {
 				}
 			}
 			
-			//Case technical error
+			//Catch Exception and Error exceptions
 			catch(\Throwable $e) {
 				//Case exists data source
 				if($bo->existsDataSource()) {

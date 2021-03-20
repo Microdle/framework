@@ -78,9 +78,10 @@ abstract class AbstractDs {
 	 * Execute a prepared statement (insert, update, delete, get).
 	 * @param string $sql Request.
 	 * @param array $parameters Array of parameters.
+	 * @param astring $sqlName (optional) SQL name. "mySql" by default. This parameter is used for PostgreSQL.
 	 * @return array
 	 */
-	abstract public function prepare(string $sql, array &$parameters): ?array;
+	abstract public function prepare(string $sql, array &$parameters, string $sqlName = 'mySql'): ?array;
 	
 	/**
 	 * Load and create dao instance property. It is just a DAO factory.

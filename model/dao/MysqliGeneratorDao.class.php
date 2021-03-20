@@ -3,10 +3,10 @@ namespace com\microdle\model\dao;
 
 /**
  * Microdle Framework - https://microdle.com/
- * Generator to generate source of Data Access Objects.
+ * MySqli generator to generate source of Data Access Objects.
  * @author Vincent SOYSOUVANH
  * @package com.microdle.model.dao
- * @see /application/model/bo/CoreWsBo.class.php
+ * @see /application/model/bo/core/GeneratorBo.class.php
  * @uses https://xxx/core/generate-dao?dataSourceName=microdleDs
  * @uses https://xxx/core/generate-dao?dataSourceName=microdleDs&tableName=myTable
  * @license https://github.com/microdlephp/microdle/blob/master/LICENSE (MIT License)
