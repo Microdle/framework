@@ -49,11 +49,11 @@ class Request {
 	 * @var array
 	 */
 	static public array $contentTypes = [
-		//'css' => 'text/css',
+		'css' => 'text/css',
 		'csv' => 'text/csv',
-		//'html' => 'text/html',
+		'html' => 'text/html',
 		//'jpg' => 'image/jpeg',
-		//'js' => 'application/javascript',
+		'js' => 'application/javascript',
 		'json' => 'application/json',
 		//'pdf' => 'application/pdf',
 		//'png' => 'image/png',
@@ -547,7 +547,7 @@ class Request {
 		}
 		
 		//Set HTTP status code
-		\header($_SERVER['SERVER_PROTOCOL'] . ' ' . $this->httpCode . (isset(self::$httpCodes[$this->httpCode]) ? self::$httpCodes[$this->httpCode] : $this->httpMessage));
+		\header($_SERVER['SERVER_PROTOCOL'] . ' ' . $this->httpCode . (isset(self::$httpCodes[$this->httpCode]) ? self::$httpCodes[$this->httpCode] : $this->response));
 		
 		//Set content type
 		\header('Content-Type: ' . (isset(self::$contentTypes[$this->_format]) ? self::$contentTypes[$this->_format] : self::$contentTypes['text']));

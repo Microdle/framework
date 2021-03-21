@@ -326,10 +326,10 @@ abstract class AbstractBo {
 	 * Check form data.
 	 * @param array $data (optional) Data to check. $this->_parameters by default.
 	 * @param array $formData (optional) Form data. $this->_formData by default.
-	 * @param string $redirectUrl Redirect URL on error. null by default.
 	 * @return void
+	 * @throws \com\microdle\exception\FormDataException
 	 */
-	public function checkParameters(array &$data = null, array &$formData = null, string $redirectUrl = null): void {
+	public function checkParameters(array &$data = null, array &$formData = null): void {
 		//Form data is required
 		if($formData === null) {
 			$formData = &$this->_formData;
@@ -343,157 +343,147 @@ abstract class AbstractBo {
 			$data = &$this->_parameters;
 		}
 		
-		try {
-			//Loop on form data
-			foreach($formData as $key => &$fieldData) {
-				//Case title exists
-				//if(isset($fieldData['title'])) {
-				//	$fieldData['label'] = &$fieldData['title'];
-				//}
-				$label = isset($fieldData['title']) ? $fieldData['title'] : $fieldData['label'];
+		//Loop on form data
+		foreach($formData as $key => &$fieldData) {
+			//Case title exists
+			//if(isset($fieldData['title'])) {
+			//	$fieldData['label'] = &$fieldData['title'];
+			//}
+			$label = isset($fieldData['title']) ? $fieldData['title'] : $fieldData['label'];
 
-				//Case data exists in formData
-				if(isset($data[$key])) {
-					//Case array value from select, checkbox
-					//Case string value from input, textarea, radio
-					//$values = is_array($data[$key]) ? $data[$key] : [$data[$key]];
-					if(is_array($data[$key])) {
-						//Check required value
-						if($fieldData['required']['value'] && empty($data[$key])) {
-							//Case no default value
-							if($fieldData['defaultValue'] == null) {
-								throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'required', 'message' => &$fieldData['required']['message'], 'label' => &$label]));
-							}
-
-							//Set default value
-							$data[$key] = is_array($fieldData['defaultValue']) ? $fieldData['defaultValue'] : [$fieldData['defaultValue']];
+			//Case data exists in formData
+			if(isset($data[$key])) {
+				//Case array value from select, checkbox
+				//Case string value from input, textarea, radio
+				//$values = is_array($data[$key]) ? $data[$key] : [$data[$key]];
+				if(is_array($data[$key])) {
+					//Check required value
+					if($fieldData['required']['value'] && empty($data[$key])) {
+						//Case no default value
+						if($fieldData['defaultValue'] == null) {
+							throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'required', 'message' => &$fieldData['required']['message'], 'label' => &$label]));
 						}
 
-						//Set values to check
-						$values = $data[$key];
-					}
-					else {
-						//Put value into values list to check
-						$values = [&$data[$key]];
+						//Set default value
+						$data[$key] = is_array($fieldData['defaultValue']) ? $fieldData['defaultValue'] : [$fieldData['defaultValue']];
 					}
 
-					//Loop on values
-					foreach($values as &$value) {
-						//Clean value: string by default
-						$value = trim($value);
+					//Set values to check
+					$values = $data[$key];
+				}
+				else {
+					//Put value into values list to check
+					$values = [&$data[$key]];
+				}
 
-						//Check required value
-						if($fieldData['required']['value'] && $value === '') {
-							//Case no default value
-							if($fieldData['defaultValue'] == null) {
-								throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'required', 'message' => &$fieldData['required']['message'], 'label' => &$label]));
-							}
+				//Loop on values
+				foreach($values as &$value) {
+					//Clean value: string by default
+					$value = trim($value);
 
-							//Set default value
-							$data[$key] = $value = $fieldData['defaultValue'];
+					//Check required value
+					if($fieldData['required']['value'] && $value === '') {
+						//Case no default value
+						if($fieldData['defaultValue'] == null) {
+							throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'required', 'message' => &$fieldData['required']['message'], 'label' => &$label]));
 						}
 
-						//Check length and format
-						$length = \mb_strlen($value, 'UTF-8');
-						if($length > 0) {
-							//Check miunimum length
-							if($fieldData['minLength']['value'] && $length < $fieldData['minLength']['value']) {
-								throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'minLength', 'message' => &$fieldData['minLength']['message'], 'label' => &$label]));
-							}
+						//Set default value
+						$data[$key] = $value = $fieldData['defaultValue'];
+					}
 
-							//Check maximum length
-							if($fieldData['maxLength']['value'] && $length > $fieldData['maxLength']['value']) {
-								throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'maxLength', 'message' => &$fieldData['maxLength']['message'], 'label' => &$label]));
-							}
+					//Check length and format
+					$length = \mb_strlen($value, 'UTF-8');
+					if($length > 0) {
+						//Check miunimum length
+						if($fieldData['minLength']['value'] && $length < $fieldData['minLength']['value']) {
+							throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'minLength', 'message' => &$fieldData['minLength']['message'], 'label' => &$label]));
+						}
 
-							//Check format
-							if($fieldData['format']['value']) {
-								//Case filter with constant
-								if(is_int($fieldData['format']['value'])) {
-									if(!filter_var($value, $fieldData['format']['value'])) {
-										throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'format', 'message' => &$fieldData['format']['message'], 'label' => &$label]));
-									}
-								}
+						//Check maximum length
+						if($fieldData['maxLength']['value'] && $length > $fieldData['maxLength']['value']) {
+							throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'maxLength', 'message' => &$fieldData['maxLength']['message'], 'label' => &$label]));
+						}
 
-								//Case filter with string
-								elseif($fieldData['format']['value'][0] !== '/') {
-									//Examples: 'EMAIL' or 'FILTER_VALIDATE_EMAIL'
-									$c = strtoupper($fieldData['format']['value']);
-									$filter = 'FILTER_VALIDATE_' . $c;
-									if(!defined($filter) || !filter_var($value, constant($filter))) {
-										if(!defined($c) || !filter_var($value, constant($c))) {
-											throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'format', 'message' => &$fieldData['format']['message'], 'label' => &$label]));
-										}
-									}
-								}
-
-								//Case regular expression
-								elseif(!preg_match($fieldData['format']['value'], $value)) {
+						//Check format
+						if($fieldData['format']['value']) {
+							//Case filter with constant
+							if(is_int($fieldData['format']['value'])) {
+								if(!filter_var($value, $fieldData['format']['value'])) {
 									throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'format', 'message' => &$fieldData['format']['message'], 'label' => &$label]));
 								}
 							}
 
-							//Check select: $fieldData['values'] should not be empty
-							if($fieldData['type'] === 'select' && $fieldData['values'] !== null) {
-								//Case select key not found with $value string type by default
-								if(!isset($fieldData['values'][$value])) {
-									//Get key type: the first can be empty, so get the second
-									//$keys = array_keys($fieldData['values']);
-									//$type = gettype($keys[1]);
-									$type = gettype(key($fieldData['values']));
-									
-									//String type is already checked by default
-									if($type === 'string') {
-										throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'format', 'message' => &$fieldData['format']['message'], 'label' => &$label]));
-									}
-
-									//Check with key type
-									$castedValue = $value;
-									settype($castedValue, $type);
-									if(!isset($fieldData['values'][$castedValue])) {
+							//Case filter with string
+							elseif($fieldData['format']['value'][0] !== '/') {
+								//Examples: 'EMAIL' or 'FILTER_VALIDATE_EMAIL'
+								$c = strtoupper($fieldData['format']['value']);
+								$filter = 'FILTER_VALIDATE_' . $c;
+								if(!defined($filter) || !filter_var($value, constant($filter))) {
+									if(!defined($c) || !filter_var($value, constant($c))) {
 										throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'format', 'message' => &$fieldData['format']['message'], 'label' => &$label]));
 									}
 								}
 							}
 
-							//Check number: min and max
-							elseif($fieldData['type'] === 'number') {
-								//Cast value to integer or decimal: integer by default
-								$data[$key] = $value = !isset($fieldData['step']) || is_int($fieldData['step']) ? (integer)$value : (float)$value;
+							//Case regular expression
+							elseif(!preg_match($fieldData['format']['value'], $value)) {
+								throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'format', 'message' => &$fieldData['format']['message'], 'label' => &$label]));
+							}
+						}
 
-								//Case min exists
-								if(isset($fieldData['min']) && $value < $fieldData['min']) {
+						//Check select: $fieldData['values'] should not be empty
+						if($fieldData['type'] === 'select' && $fieldData['values'] !== null) {
+							//Case select key not found with $value string type by default
+							if(!isset($fieldData['values'][$value])) {
+								//Get key type: the first can be empty, so get the second
+								//$keys = array_keys($fieldData['values']);
+								//$type = gettype($keys[1]);
+								$type = gettype(key($fieldData['values']));
+
+								//String type is already checked by default
+								if($type === 'string') {
 									throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'format', 'message' => &$fieldData['format']['message'], 'label' => &$label]));
 								}
 
-								//Case max exists
-								if(isset($fieldData['max']) && $value > $fieldData['max']) {
+								//Check with key type
+								$castedValue = $value;
+								settype($castedValue, $type);
+								if(!isset($fieldData['values'][$castedValue])) {
 									throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'format', 'message' => &$fieldData['format']['message'], 'label' => &$label]));
 								}
+							}
+						}
+
+						//Check number: min and max
+						elseif($fieldData['type'] === 'number') {
+							//Cast value to integer or decimal: integer by default
+							$data[$key] = $value = !isset($fieldData['step']) || is_int($fieldData['step']) ? (integer)$value : (float)$value;
+
+							//Case min exists
+							if(isset($fieldData['min']) && $value < $fieldData['min']) {
+								throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'format', 'message' => &$fieldData['format']['message'], 'label' => &$label]));
+							}
+
+							//Case max exists
+							if(isset($fieldData['max']) && $value > $fieldData['max']) {
+								throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'format', 'message' => &$fieldData['format']['message'], 'label' => &$label]));
 							}
 						}
 					}
 				}
+			}
 
-				//Case data is not set but is required
-				elseif($fieldData['required']['value']) {
-					//Case no default value
-					if($fieldData['type'] === 'checkbox' || $fieldData['defaultValue'] == null) {
-						throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'required', 'message' => &$fieldData['required']['message'], 'label' => &$label]));
-					}
-
-					//Set default value
-					$data[$key] = $fieldData['defaultValue'];
+			//Case data is not set but is required
+			elseif($fieldData['required']['value']) {
+				//Case no default value
+				if($fieldData['type'] === 'checkbox' || $fieldData['defaultValue'] == null) {
+					throw new \com\microdle\exception\FormDataException(json_encode(['fieldId' => &$key, 'type' => 'required', 'message' => &$fieldData['required']['message'], 'label' => &$label]));
 				}
+
+				//Set default value
+				$data[$key] = $fieldData['defaultValue'];
 			}
-		} catch(\Exception $e) {
-			//Case no redirect URL, throw exception
-			if($redirectUrl === null) {
-				throw $e;
-			}
-			
-			//On error, redirect URL
-			$this->_request->redirect($redirectUrl);
 		}
 	}
 	

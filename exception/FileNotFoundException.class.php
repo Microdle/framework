@@ -8,7 +8,7 @@ namespace com\microdle\exception;
  * @package com.microdle.exception
  * @license https://github.com/microdlephp/microdle/blob/master/LICENSE (MIT License)
  */
-class NotFoundException extends \Exception {
+class FileNotFoundException extends \Exception {
 	/**
 	 * The exception code.
 	 * @var int
